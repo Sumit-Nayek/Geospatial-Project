@@ -1,5 +1,5 @@
 Scientific Critique of the Current Results (Stage-by-Stage)
-The heatmap ("image_c80cc0.png") reveals a classic deep learning geospatial error: Edge Effects and Background Bias.
+The heatmap reveals a classic deep learning geospatial error: Edge Effects and Background Bias.
 Phase 3 (Data Engineering) Flaw: You can see the entire background (which should be empty ocean or neighboring states) is colored pale yellow (scoring ~47.4). This happened because we replaced NaN (No Data) with 0.0 to prevent PyTorch from crashing. The neural network treats 0.0 as a legitimate, identical climate reading for millions of pixels.
 Phase 4 (Algorithm) Flaw: Look at the deep red pixels hugging the exact border of West Bengal. These are not real climate anomalies. When your Convolutional Autoencoder's 3 \times 3 filters slide across the boundary between valid vegetation (NDVI = ~0.6) and the background zero-padding (NDVI = 0.0), it sees a massive, sudden gradient drop. Your custom AnomalyWeightedLoss detects this sudden drop as an "extreme anomaly" and heavily penalizes it, forcing those pixels into the highest vulnerability tier (Red = 100).
 Phase 5 (Clustering) Behavior: The Deep Embedded Clustering (DEC) algorithm essentially grouped your data into: 1) The uniform background, 2) The artificial border anomalies, and 3) The actual interior state variations.
